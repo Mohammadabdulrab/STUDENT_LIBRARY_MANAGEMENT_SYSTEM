@@ -30,4 +30,9 @@ public class Card {
     @UpdateTimestamp // it adds the time when card is updated
     private String updateDate;
 
+
+    @OneToOne
+    @JoinColumn
+    private Student student;
+
 }

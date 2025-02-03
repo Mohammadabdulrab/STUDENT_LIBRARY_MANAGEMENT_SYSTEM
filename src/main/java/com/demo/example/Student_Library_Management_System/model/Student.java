@@ -28,4 +28,7 @@ public class Student {
 
     @Column(name="mobile",nullable = false,unique = true)
     private String mobile;
+
+    @OneToOne(mappedBy = "student",cascade = CascadeType.ALL)
+    private Card card;
 }
