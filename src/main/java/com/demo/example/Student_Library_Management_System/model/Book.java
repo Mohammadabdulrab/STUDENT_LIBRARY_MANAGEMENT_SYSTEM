@@ -30,4 +30,14 @@ public class Book {
     @Column(name="issuedToStudent",nullable = false)
     private boolean issuedToStudent;
 
+
+    @ManyToOne
+    @JoinColumn
+    private Author author;
+
+
+    @ManyToOne
+    @JoinColumn
+    private Card card;
+
 }
