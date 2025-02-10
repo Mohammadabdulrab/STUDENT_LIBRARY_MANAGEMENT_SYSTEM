@@ -2,8 +2,12 @@ package com.demo.example.Student_Library_Management_System.model;
 
 
 import com.demo.example.Student_Library_Management_System.enums.CardStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,6 +17,9 @@ import java.util.List;
 @Data
 @Entity
 @Table(name="card")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Card {
 
 
@@ -34,6 +41,7 @@ public class Card {
     private String updateDate;
 
 
+    @JsonBackReference
     @OneToOne
     @JoinColumn
     private Student student;
@@ -42,5 +50,8 @@ public class Card {
 
     @OneToMany(mappedBy = "card",cascade = CascadeType.ALL)
     private List<Book> booksIssuedToCard=new ArrayList<>();
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    private List<Transaction> transactionList= new ArrayList<>();
 
 }
