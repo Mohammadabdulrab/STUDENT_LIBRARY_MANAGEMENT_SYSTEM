@@ -8,12 +8,18 @@ import com.demo.example.Student_Library_Management_System.model.Card;
 import com.demo.example.Student_Library_Management_System.model.Student;
 import com.demo.example.Student_Library_Management_System.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.antlr.v4.runtime.tree.xpath.XPath.findAll;
+import static org.hibernate.query.Page.page;
 
 @Service
 public class StudentService {
@@ -41,6 +47,31 @@ public class StudentService {
     public List<Student> getAllStudent(){
         List<Student> studentList = studentRepository.findAll();
         return studentList;
+    }
+
+    /*
+    pagination-> fetching records or data in the form of page
+    pageNumber-> number of page we want to see(page number starts with 0,1,2,3,4,......)
+    pageSize-> total number of page in each record( and it is fixed in each page)
+    database-> total records = 28 , pagesize=5
+    0th page->1-5
+    1st page->6-10
+    2nd page->11-15
+    3rd page->16-20
+    4th page->21-25
+    5th page->26-28
+     */
+
+    public List<Student> getAllStudentsByPages(int pageNo, int pageSize,String sortInput){
+     Page<Student> studentPage  =studentRepository.findAll(PageRequest.of(pageNo,pageSize, Sort.by(sortInput).ascending()));
+       // we can not send studentPage output directly
+       // so we need to convert page into the list and send list as output
+
+        List<Student> studentList= new ArrayList<>();
+        for(Student std1:studentPage){
+            studentList.add(std1);
+        }
+     return studentList;
     }
 
     public Student getStudentById(int studentId){
@@ -75,5 +106,16 @@ public class StudentService {
             return "Student with studentId :"+studentId+" not found";
         }
 
+    }
+
+    public Student getStudentByEmail(String email){
+        Student student=studentRepository.findByEmail(email);
+        return student;
+    }
+
+
+    public Student getStudentByEmailQuery(String email){
+        Student student=studentRepository.findByEmail(email);
+        return student;
     }
 }
