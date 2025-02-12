@@ -7,6 +7,8 @@ import com.demo.example.Student_Library_Management_System.enums.CardStatus;
 import com.demo.example.Student_Library_Management_System.model.Card;
 import com.demo.example.Student_Library_Management_System.model.Student;
 import com.demo.example.Student_Library_Management_System.repository.StudentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,9 +30,10 @@ public class StudentService {
     private StudentRepository studentRepository;
 
 
+    Logger logger= LoggerFactory.getLogger(StudentService.class);
 
     public String addStudent(StudentRequestDto studentRequestDto){
-
+         logger.info("addStudent methods started");
 
          Student student= StudentConverter.convertStudentRequestDtoToStudent(studentRequestDto);
      //  whenever the student is created card is also created for that student
@@ -39,13 +42,20 @@ public class StudentService {
          card.setStudent(student);
          student.setCard(card);
 
+        logger.info("Card information is also saving in database along with Student");
          studentRepository.save(student);
 
+        logger.info("addStudent methods ended");
          return "Student and Card are created";
     }
 
     public List<Student> getAllStudent(){
+
         List<Student> studentList = studentRepository.findAll();
+
+        if(studentList.isEmpty()){
+            throw new RuntimeException("Student List is not found");
+        }
         return studentList;
     }
 
@@ -75,12 +85,22 @@ public class StudentService {
     }
 
     public Student getStudentById(int studentId){
+
+        logger.info("getStudentById method started");
+
         Student student=studentRepository.findById(studentId).get();
+
+        if(student==null){
+            logger.error("Student not found");
+            throw new RuntimeException("Student are not found with id :"+studentId);
+        }
+        logger.info("getStudentById method ended");
         return student ;
     }
 
     public String deleteStudentById(int studentId){
         studentRepository.deleteById(studentId);
+
         return "Student got deleted successfully";
     }
 
@@ -91,6 +111,9 @@ public class StudentService {
 
     public String updateStudent(StudentRequestDto studentRequestDto, int studentId){
         Student student= getStudentById(studentId);
+        if(student==null){
+            throw new RuntimeException("Student is not present with id: "+studentId);
+        }
         if(student!=null){
 
            student.setName(studentRequestDto.getName());
